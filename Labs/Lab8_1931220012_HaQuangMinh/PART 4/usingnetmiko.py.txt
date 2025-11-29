@@ -1,0 +1,45 @@
+from netmiko import ConnectHandler
+
+# Thông tin thiết bị
+csr1 = {
+    "device_type": "cisco_ios",
+    "host": "192.168.74.152",
+    "username": "cisco",
+    "password": "cisco123!",
+    "secret": "cisco123!",   # nếu có enable
+    "port": 22,
+}
+
+# Kết nối
+net_connect = ConnectHandler(**csr1)
+net_connect.enable()
+
+# Chạy lệnh
+cmds = [
+    "show version | include Cisco",
+    "show line vty 0 4",
+    "show processes cpu sorted | include one minute",
+    "show processes memory | include Processor"
+]
+
+output = {}
+for cmd in cmds:
+    output[cmd] = net_connect.send_command(cmd)
+
+# Lưu file
+with open("artifacts/csr1_security_cpu_mem.txt", "w") as f:
+    f.write("===== DEVICE FACTS (show version) =====\n")
+    f.write(output["show version | include Cisco"] + "\n\n")
+
+    f.write("===== SECURITY (VTY) =====\n")
+    f.write(output["show line vty 0 4"] + "\n\n")
+
+    f.write("===== CPU (1-MINUTE) =====\n")
+    f.write(output["show processes cpu sorted | include one minute"] + "\n\n")
+
+    f.write("===== MEMORY =====\n")
+    f.write(output["show processes memory | include Processor"] + "\n\n")
+
+print("Artifacts saved to artifacts/csr1_security_cpu_mem.txt")
+
+net_connect.disconnect()

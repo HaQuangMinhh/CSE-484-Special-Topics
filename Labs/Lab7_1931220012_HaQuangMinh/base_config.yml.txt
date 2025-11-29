@@ -1,0 +1,20 @@
+- name: Base idempotent configuration
+  hosts: ios
+  gather_facts: no
+
+  tasks:
+    - name: Global settings
+      cisco.ios.ios_config:
+        lines:
+          - service timestamps debug datetime msec
+          - service timestamps log datetime msec
+          - logging buffered 19999
+          - ip ssh version 2
+
+    - name: VTY settings
+      cisco.ios.ios_config:
+        parents: line vty 0 4
+        lines:
+          - login local
+          - transport input ssh
+          - exec-timeout 10 0

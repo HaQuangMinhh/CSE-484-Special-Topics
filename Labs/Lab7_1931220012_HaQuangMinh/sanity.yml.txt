@@ -1,0 +1,15 @@
+- name: Sanity check IOS
+  hosts: ios
+  gather_facts: no
+  tasks:
+    - name: Gather IOS facts
+      cisco.ios.ios_facts:
+
+    - name: Show version
+      cisco.ios.ios_command:
+        commands: ["show version"]
+      register: ver
+
+    - debug:
+        msg: "Model={{ ansible_net_model }} Version={{ ansible_net_version }}"
+

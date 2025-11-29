@@ -1,0 +1,32 @@
+from netmiko import ConnectHandler
+
+device = {
+    "device_type": "cisco_ios",
+    "host": "192.168.74.152",
+    "username": "cisco",
+    "password": "cisco",
+    "secret": "cisco",
+}
+
+net_connect = ConnectHandler(**device)
+net_connect.enable()
+
+# Run CLI commands
+user_output = net_connect.send_command("show running-config | include username")
+ssh_output = net_connect.send_command("show running-config | include ip ssh")
+banner_output = net_connect.send_command("show running-config | include banner")
+
+# Verification logic
+user_exists = "username" in user_output
+ssh_enabled = "ip ssh version 2" in ssh_output
+banner_set = "banner motd" in banner_output
+
+print("\n===== SECURITY VERIFICATION REPORT =====")
+print(f"Local user exists:       {'YES' if user_exists else 'NO'}")
+print(f"SSH enabled:             {'YES' if ssh_enabled else 'NO'}")
+print(f"MOTD banner configured:  {'YES' if banner_set else 'NO'}")
+
+print("\n--- Raw Output ---")
+print("User config:", user_output)
+print("SSH config:", ssh_output)
+print("Banner config:", banner_output)

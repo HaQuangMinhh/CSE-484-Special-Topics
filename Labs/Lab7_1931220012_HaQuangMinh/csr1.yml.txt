@@ -1,0 +1,16 @@
+ansible_user: cisco
+ansible_password: cisco123!
+
+ansible_become: true
+ansible_become_method: enable
+ansible_become_password: cisco123!
+
+ansible_network_os: cisco.ios.ios
+ansible_connection: ansible.netcommon.network_cli
+
+# ====== FIX SSH ERROR HERE ======
+ansible_ssh_common_args: >
+  -o PreferredAuthentications=password
+  -o PubkeyAuthentication=no
+  -oKexAlgorithms=+diffie-hellman-group14-sha1
+  -oHostKeyAlgorithms=+ssh-rsa

@@ -1,0 +1,5 @@
+---
+csr:
+  username: cisco
+  password: cisco123!
+  platform: ios

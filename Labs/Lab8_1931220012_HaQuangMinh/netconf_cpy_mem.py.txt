@@ -1,0 +1,34 @@
+from ncclient import manager
+
+HOST = "192.168.74.152"
+USER = "cisco"
+PASS = "cisco123!"
+
+# Basic filter - interface statistics (universal YANG)
+FILTER = """
+<filter>
+  <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"/>
+</filter>
+"""
+
+with manager.connect(
+    host=HOST,
+    port=830,
+    username=USER,
+    password=PASS,
+    hostkey_verify=False,
+    device_params={"name": "csr"},
+    allow_agent=False,
+    look_for_keys=False
+) as m:
+
+    reply = m.get(FILTER)
+
+    # Save XML
+    with open("netconf_cpu_mem.xml", "w") as f:
+        f.write(reply.xml)
+
+    print("\n===== NETCONF INTERFACE STATS =====")
+    print(reply.xml)
+
+print("\nSaved as netconf_cpu_mem.xml")

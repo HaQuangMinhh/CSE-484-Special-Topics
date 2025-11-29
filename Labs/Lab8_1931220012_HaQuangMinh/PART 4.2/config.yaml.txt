@@ -1,0 +1,6 @@
+---
+inventory:
+  plugin: YAMLInventory
+  options:
+    host_file: "hosts.yaml"
+    group_file: "groups.yaml"

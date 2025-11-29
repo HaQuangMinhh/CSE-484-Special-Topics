@@ -1,0 +1,5 @@
+---
+csr1:
+  hostname: 192.168.74.152
+  groups:
+    - csr

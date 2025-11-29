@@ -1,0 +1,33 @@
+import os
+os.environ["PYOPENSSL_ALLOW_UNSUPPORTED_OPENSSL"] = "1"
+
+import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+import json
+
+HOST = "192.168.74.152"
+USER = "cisco"
+PASS = "cisco123!"
+
+url = f"https://{HOST}/restconf/data/ietf-interfaces:interfaces-state/interface"
+
+headers = {
+    "Accept": "application/yang-data+json",
+    "Content-Type": "application/yang-data+json"
+}
+
+r = requests.get(url, headers=headers, auth=(USER, PASS), verify=False)
+
+data = r.json()
+
+with open("restconf_cpu_mem.json", "w") as f:
+    json.dump(data, f, indent=4)
+
+print(json.dumps(data, indent=4))
+print("\nSaved as restconf_cpu_mem.json")
+
+devasc@labvm:~/Documents$ 
+

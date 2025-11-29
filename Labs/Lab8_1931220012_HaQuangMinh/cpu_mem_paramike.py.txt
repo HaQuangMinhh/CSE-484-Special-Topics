@@ -1,0 +1,41 @@
+import paramiko
+import time
+
+host = "192.168.74.152"
+username = "cisco"
+password = "cisco123!"
+
+# --- ENABLE LEGACY SSH (KEX + HOSTKEY + CIPHER) ---
+paramiko.Transport._preferred_kex = (
+    'diffie-hellman-group14-sha1',
+    'diffie-hellman-group1-sha1',
+) + paramiko.Transport._preferred_kex
+
+paramiko.Transport._preferred_keys = (
+    'ssh-rsa',
+) + paramiko.Transport._preferred_keys
+
+paramiko.Transport._preferred_ciphers = (
+    'aes256-cbc',
+    'aes128-cbc',
+    '3des-cbc',
+) + paramiko.Transport._preferred_ciphers
+
+# --- CONNECT ---
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.connect(host, username=username, password=password, look_for_keys=False, allow_agent=False)
+
+shell = client.invoke_shell()
+time.sleep(1)
+
+shell.send("show processes cpu sorted | include one minute\n")
+shell.send("show memory statistics\n")
+time.sleep(2)
+
+output = shell.recv(50000).decode()
+
+print("\n===== CPU & MEMORY REPORT (PARAMIKO) =====")
+print(output)
+
+client.close()

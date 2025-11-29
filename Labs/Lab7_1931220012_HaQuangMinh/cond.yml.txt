@@ -1,0 +1,27 @@
+- name: Conditional hostname configuration
+  hosts: ios
+  gather_facts: no
+
+  tasks:
+    - name: Gather facts
+      cisco.ios.ios_facts:
+        gather_subset:
+          - interfaces
+          - default
+
+    - name: Append -LAB if not present
+      cisco.ios.ios_config:
+        lines:
+          - "hostname {{ ansible_net_hostname }}-LAB"
+      when: ansible_net_hostname is defined and
+            not ansible_net_hostname.endswith('-LAB')
+
+    - name: Warn if IOS < 17.x
+      debug:
+        msg: "WARNING: IOS version older than 17.x"
+      when: ansible_net_version.split('.')[0] | int < 17
+
+    - name: Check Gi1 admin UP
+      debug:
+        msg: "Gi1 is enabled"
+      when: ansible_net_interfaces['GigabitEthernet1'].enabled

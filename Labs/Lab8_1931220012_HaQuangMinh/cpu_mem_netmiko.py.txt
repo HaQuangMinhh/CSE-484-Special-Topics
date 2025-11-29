@@ -1,0 +1,40 @@
+from netmiko import ConnectHandler
+import re
+
+device = {
+    "device_type": "cisco_ios",
+    "host": "192.168.74.152",
+    "username": "cisco",
+    "password": "cisco123!",
+}
+
+net = ConnectHandler(**device)
+
+# CPU
+cpu_raw = net.send_command("show processes cpu sorted | include one minute")
+
+# Memory
+mem_raw = net.send_command("show processes memory | include Processor")
+
+print("\n===== CPU & MEMORY REPORT (NETMIKO) =====")
+
+# Parse CPU (ví dụ: CPU utilization for one minute: 7%)
+cpu_match = re.search(r"one minute: (\d+)%", cpu_raw)
+cpu_1min = cpu_match.group(1) if cpu_match else "N/A"
+print(f"CPU 1-minute usage: {cpu_1min}%")
+
+# Parse Memory (ví dụ: Processor Pool Total: 958632432 Used: 32234512 Free: 926397920)
+mem_match = re.search(r"Processor\s+(\S+)\s+Used:\s+(\S+)\s+Free:\s+(\S+)", mem_raw)
+if mem_match:
+    total = mem_match.group(1)
+    used = mem_match.group(2)
+    free = mem_match.group(3)
+    print(f"Memory Used: {used}")
+    print(f"Memory Free: {free}")
+else:
+    print("Memory info not found")
+
+print("\n--- Raw Output CPU ---")
+print(cpu_raw)
+print("\n--- Raw Output Memory ---")
+print(mem_raw)

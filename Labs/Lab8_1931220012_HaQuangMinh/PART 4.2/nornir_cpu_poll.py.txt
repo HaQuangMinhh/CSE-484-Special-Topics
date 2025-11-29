@@ -1,0 +1,46 @@
+from nornir import InitNornir
+from nornir_netmiko.tasks import netmiko_send_command
+from nornir_utils.plugins.functions import print_result
+import os
+
+os.makedirs("artifacts", exist_ok=True)
+
+# Load Nornir
+nr = InitNornir(config_file="config.yaml")
+
+def poll_cpu_interfaces(task):
+    # đảm bảo trả về string
+    intf_result = task.run(
+        task=netmiko_send_command,
+        command_string="show interfaces description",
+        use_textfsm=False
+    )
+    cpu_result = task.run(
+        task=netmiko_send_command,
+        command_string="show processes cpu sorted | include one minute",
+        use_textfsm=False
+    )
+    task.host["interfaces"] = intf_result.result or ""
+    task.host["cpu"] = cpu_result.result or ""
+
+results = nr.run(task=poll_cpu_interfaces)
+print_result(results)
+
+with open("artifacts/nornir_cpu_summary.txt", "w") as f:
+    for host, host_result in results.items():
+        # lấy kết quả an toàn
+        intf_text = host_result[0].result or ""
+        cpu_text = host_result[1].result or ""
+        intf_lines = intf_text.strip().splitlines()
+        
+        # đếm số interfaces up/up
+        up_up_count = sum(
+            1 for line in intf_lines
+            if len(line.split()) >= 3 and line.split()[1].lower() == "up" and line.split()[2].lower() == "up"
+        )
+
+        f.write(f"Hostname: {host}\n")
+        f.write(f"CPU 1-minute usage: {cpu_text.strip()}\n")
+        f.write(f"Interfaces up/up: {up_up_count}\n\n")
+
+print("\nSummary saved to artifacts/nornir_cpu_summary.txt")
