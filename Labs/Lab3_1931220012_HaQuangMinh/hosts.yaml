@@ -1,0 +1,7 @@
+r1:
+  hostname: 172.16.10.189
+  platform: CSR 1000v VM
+
+r2:
+  hostname: 172.16.10.175
+  platform: CSR 1000v VM 2
