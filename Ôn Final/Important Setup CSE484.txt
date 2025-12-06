@@ -1,0 +1,25 @@
+Trên Devas:
+
+sudo apt update
+sudo apt install -y python3 python3-venv python3-pip git sshpass build-essential \
+libxml2-dev libxslt1-dev libssl-dev
+
+
+Python virtual environment
+pip install --upgrade pip
+
+Python libraries
+pip install netmiko paramiko pexpect
+pip install requests ncclient
+pip install textfsm ntc-templates
+pip install nornir nornir_netmiko nornir_utils
+pip install pyyaml rich xmltodict
+
+
+Ansible
+pip install ansible ansible-core
+ansible-galaxy collection install cisco.ios
+
+
+
+
