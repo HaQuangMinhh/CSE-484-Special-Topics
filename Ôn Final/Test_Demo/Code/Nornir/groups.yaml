@@ -1,0 +1,5 @@
+
+iosxe:
+  platform: ios
+  data:
+    device_type: cisco_ios

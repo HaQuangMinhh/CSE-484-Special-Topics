@@ -1,0 +1,6 @@
+# config.yaml
+inventory:
+  plugin: SimpleInventory
+  options:
+    host_file: "hosts.yaml"
+    group_file: "groups.yaml"

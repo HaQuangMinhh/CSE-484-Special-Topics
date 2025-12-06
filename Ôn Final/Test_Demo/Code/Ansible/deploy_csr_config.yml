@@ -1,0 +1,32 @@
+- name: Deploy base configuration to CSR1000v
+  hosts: csr
+  gather_facts: no
+  collections:
+    - cisco.ios
+
+  tasks:
+    - name: Get IOS version via show version
+      ios_command:
+        commands:
+          - show version | include IOS XE Software
+      register: ver_out
+
+    - name: Extract version string
+      set_fact:
+        ios_version: "{{ ver_out.stdout[0].split()[-1] | default('0.0.0') }}"
+
+    - name: Debug IOS version
+      debug:
+        msg: "IOS-XE version detected: {{ ios_version }}"
+
+    - name: Apply base configuration
+      ios_config:
+        lines:
+          - service password-encryption
+          - logging trap debugging
+          - ip http server
+
+    - name: Recommend upgrade if IOS-XE version <= 17.2
+      debug:
+        msg: "IOS-XE version ({{ ios_version }}) is <= 17.2 - consider upgrading."
+      when: ios_version is version('17.2', '<=')

@@ -1,0 +1,18 @@
+{
+    "ietf-routing:routing": {
+        "routing-instance": [
+            {
+                "name": "default",
+                "description": "default-vrf [read-only]",
+                "routing-protocols": {
+                    "routing-protocol": [
+                        {
+                            "type": "ietf-routing:static",
+                            "name": "1"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

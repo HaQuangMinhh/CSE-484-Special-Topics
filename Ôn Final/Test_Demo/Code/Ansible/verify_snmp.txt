@@ -1,0 +1,2 @@
+0 Unknown community name
+    0 Illegal operation for community name supplied

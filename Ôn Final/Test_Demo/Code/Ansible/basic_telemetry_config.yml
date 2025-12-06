@@ -1,0 +1,27 @@
+---
+- name: Configure basic SNMP telemetry
+  hosts: csr
+  gather_facts: no
+  collections:
+    - cisco.ios
+
+  tasks:
+
+    - name: Apply SNMP configuration
+      ios_config:
+        lines:
+          - snmp-server community public RO
+          - snmp-server location LAB-ROOM-204
+          - snmp-server contact network-team@university.edu
+
+    - name: Verify SNMP configuration
+      ios_command:
+        commands:
+          - show snmp | include community
+      register: snmp_out
+
+    - name: Save SNMP verify output to file
+      copy:
+        content: "{{ snmp_out.stdout[0] }}"
+        dest: "./verify_snmp.txt"
+      delegate_to: localhost

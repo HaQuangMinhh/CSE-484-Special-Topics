@@ -1,0 +1,7 @@
+
+csr1:
+  hostname: 192.168.13.149   
+  username: cisco
+  password: cisco123!        
+  groups:
+    - iosxe

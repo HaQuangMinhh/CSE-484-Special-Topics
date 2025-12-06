@@ -1,0 +1,1 @@
+2025-12-06 02:25:40,831 -  nornir.core -     INFO -        run() - Running task 'netmiko_send_command' with args {'command_string': 'show ip interface brief'} on 1 hosts
